@@ -62,3 +62,23 @@ Coordinate your chosen date in the chat to ensure unique selections.
 - **Performance Analysis:** Depth of parallel processing efficiency evaluation, speedup calculations, and visualization of results.
 - **Use of Vilnius University HPC (+1 Point):** Proper execution and documentation of results on the HPC system.
 - **Presentation:** Clarity and conciseness in explaining the solution.
+
+## Steps to run program
+
+### Setting up environment and running the code
+
+1. Run `git clone https://github.com/SelwynAng/VU_BDA_Assignment_1.git`.
+2. Use Anaconda to create a new environment by running `conda env -f environment.yml -n {new_env_name}`.
+3. Run `conda activate {new_env_name}` to enter the newly created environment.
+4. Download relevant dataset from http://web.ais.dk/aisdata/ and unzip the zip file to obtain CSV file. Store the CSV file under the `data/` directory.
+5. Run `python3 main.py` and wait for the results in the CSV file and the plotted graph!
+6. Note that you can toggle the chunk sizes and the number of workers in `main.py`.
+
+### Running in Vilnius University's HPC
+
+1. SSH into remote server via the command `ssh {VU_MIF_Username}@uosis.mif.vu.lt`, and it will prompt for password.
+2. Once the remote server is accessed, SSH into HPC server via the command `ssh hpc`.
+3. Copy the folder from local environment into remote server's environment first and then do the same from remote server to HPC's server via `scp` commands.
+4. Remember to use Anaconda to create a new environment using `conda env create -f environment.yml -n {new_env_name}` and activate it via `conda activate {new_env_name}`.
+5. Run `sbatch job.sh` to send the job to HPC and wait for results in the output text file.
+6. Status of job can be viewed via the command `squeue`. Job can be cancelled using `scancel {job_id}` command too.
