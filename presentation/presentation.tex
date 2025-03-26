@@ -1,0 +1,74 @@
+\documentclass{beamer}
+\usepackage{graphicx} % For including images
+\usepackage{hyperref} % For clickable links
+
+\usetheme{CambridgeUS}
+
+\title{GPS Spoofing Detection}
+\author{Jing Xuan Selwyn Ang}
+\institute{Vilnius University, National University of Singapore}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Areas to parallelise}
+\begin{itemize}
+    \item \textbf{Data Parallelism:} CSV data can be divided into chunks and each chunk can be sent to the pool of workers to be processed by a specific worker.
+    \begin{itemize}
+        \item Parallelism is done via Python's multiprocessing module with the apply\_async method.
+        \item Experiment was conducted to see which specific configuration (chunk size and number of workers) causes the most speed-up over sequential processing.
+    \end{itemize}
+    \item \textbf{Task Parallelism:} Decided to opt against task parallelism techniques due to a few reasons:
+    \begin{itemize}
+        \item May need to pass intermediate results from one set of tasks (e.g. location anomaly detection) to another (e.g. cross-vessel checks). On large datasets, that can become expensive and complicated.
+        \item Some workers may become overloaded if they are assigned more computationally-heavy tasks.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Parallel processing performance}
+    \begin{columns}
+        \column{0.5\textwidth} 
+        \begin{itemize}
+            \item More workers does not imply faster performance! \\ 
+            (More workers may lead to increased overhead due to spawning of more processes, increased splitting of data \& concatenating of data across more workers).
+            \item Chunk size does not really correlate with speed-up.
+        \end{itemize}
+    
+        \column{0.5\textwidth} 
+        \centering
+        \includegraphics[width=\linewidth]{img/speedup_workers_chunksize.png}
+    \end{columns}
+    \end{frame}
+    
+
+% Slide 5: Findings and Conclusion
+\begin{frame}
+\frametitle{Short-comings of parallel processing}
+\begin{enumerate}
+    \item Data parallelism involves breaking up data across different chunks, which results in some calculations that require the whole dataset to be inaccurate (eg. Different chunk sizes will lead to different number of anomalous rows being discovered).
+    \item Sequential processing is actually faster than parallel processing on smaller, less complex datasets.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Experience executing code on the HPC server}
+    \begin{columns}
+        \column{0.6\textwidth} 
+        \begin{itemize}
+            \item HPC server can be accessed via SSH (Instructions can be found in README).
+            \item Installed conda in HPC to manage Python dependencies and packages.
+            \item Created a shell script to send the job to the SLURM manager in the HPC server, so that code can run independently on the HPC server. 
+            \item Results are saved to an output text file and CSV file.
+        \end{itemize}
+        
+        \column{0.4\textwidth} 
+        \centering
+        \includegraphics[width=\linewidth]{img/hpc_job_sh.png}
+    \end{columns}
+\end{frame}
+\end{document}
